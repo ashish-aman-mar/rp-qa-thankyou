@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/Favicon.png">
+  <title>Demo Booked — RocketPay</title>
+
+  <!-- Enhanced Conversions: read Calendly URL params into dataLayer before GTM loads -->
+  <script>
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var phone = p.get('answer_1') || '';
+      window.rp_email   = p.get('invitee_email')    || '';
+      window.rp_phone   = phone.replace(/\s+/g, '');
+      window.rp_name    = p.get('invitee_full_name') || '';
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        'user_email':   window.rp_email,
+        'user_phone':   window.rp_phone,
+        'user_name':    window.rp_name,
+        'lead_segment': p.get('answer_3') || ''
+      });
+    })();
+  </script>
+  <!-- End Enhanced Conversions -->
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WZ2CTRLQ');</script>
+  <!-- End Google Tag Manager -->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="stylesheet" href="shared/style.css?v=2">
+
+  <style>
+    /* ── Sia CTA section ─────────────────────────────────────── */
+    .sia-section { text-align: center; margin-bottom: 4px; }
+
+    .sia-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111;
+      margin: 0 0 6px;
+    }
+
+    .sia-desc {
+      font-size: 0.925rem;
+      color: #555;
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .sia-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #0d53d8;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .sia-btn:hover  { background: #0b47bc; }
+    .sia-btn:active { transform: scale(0.97); }
+
+    .sia-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .sia-online {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: #444;
+      margin-top: 12px;
+    }
+
+    .sia-online-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: sia-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes sia-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sia-online-dot { animation: none; }
+      .sia-modal[aria-hidden="false"] { animation: none; }
+      .sia-modal-card { animation: none !important; }
+    }
+
+    /* ── Secondary confirmation ───────────────────────────────── */
+    .ty-secondary-note {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ── Modal ────────────────────────────────────────────────── */
+    .sia-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+
+    .sia-modal[aria-hidden="false"] {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sia-modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 88vh;
+      max-height: 88vh;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+      transform: scale(0.92);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+    }
+
+    .sia-modal[aria-hidden="false"] .sia-modal-card {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .sia-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.06);
+      color: #333;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .sia-modal-close:hover { background: rgba(0,0,0,0.12); }
+
+    .sia-modal iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── Mobile: full-screen modal ────────────────────────────── */
+    @media (max-width: 600px) {
+      .sia-modal-card {
+        max-width: 100%;
+        width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+      }
+
+      .sia-modal-close {
+        top: calc(10px + env(safe-area-inset-top, 0px));
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ2CTRLQ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="ty-page">
+
+    <div class="ty-logo">
+      <img src="assets/G178.webp" alt="RocketPay">
+    </div>
+
+    <div class="ty-card">
+
+      <!-- ── Primary: Talk to Sia ── -->
+      <div class="sia-section">
+        <p class="sia-heading">Talk to Sia now</p>
+        <p class="sia-desc">
+          Sia is RocketPay's AI Sales Engineer. She connects with you right here in the browser, walks you through the platform, and answers your questions. It takes a couple of minutes. No waiting for a callback.
+        </p>
+        <button class="sia-btn" id="siaBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z" fill="#fff"/><path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M12 19v4m-4 0h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          Talk to Sia
+        </button>
+        <div class="sia-online">
+          <span class="sia-online-dot"></span>
+          Sia is online
+        </div>
+      </div>
+
+      <hr class="ty-divider">
+
+      <!-- ── Secondary: booking confirmed ── -->
+      <div class="ty-check-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12.5L10 17.5L19 8" stroke="#0d53d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <p class="ty-eyebrow">Demo Booked</p>
+      <p class="ty-secondary-note">Prefer to wait? Your demo is confirmed and our team will reach out before your session.</p>
+
+      <hr class="ty-divider">
+
+      <div class="ty-steps">
+        <div class="ty-step">
+          <div class="ty-step-num">1</div>
+          <p class="ty-step-text"><strong>Check your inbox</strong> for a confirmation email with your booking details.</p>
+        </div>
+        <div class="ty-step">
+          <div class="ty-step-num">2</div>
+          <p class="ty-step-text"><strong>Our team connects</strong> before the session to understand your use case.</p>
+        </div>
+        <div class="ty-step">
+          <div class="ty-step-num">3</div>
+          <p class="ty-step-text"><strong>Your demo session</strong> covers the features relevant to your collections setup.</p>
+        </div>
+      </div>
+
+      <p class="ty-footer-note">Questions? Write to us at <a href="mailto:akshita.s@rocketpay.co.in">akshita.s@rocketpay.co.in</a></p>
+
+    </div>
+
+  </div>
+
+  <!-- ── Sia Modal ── -->
+  <div class="sia-modal" id="siaModal" aria-hidden="true" role="dialog" aria-label="Talk to Sia">
+    <div class="sia-modal-card">
+      <button class="sia-modal-close" id="siaClose" aria-label="Close">&times;</button>
+      <!-- iframe injected by JS on open, removed on close -->
+    </div>
+  </div>
+
+  <script>
+    // ── CONFIG: all editable values in one place ──────────────
+    var CONFIG = {
+      iframeBase: "https://qa.marklinea.com/",   // Switch to production Marklinea URL before real prospects hit this
+      clientname: "rocketpay",
+      clientid:   "269fbd7f-a51b-4273-9366-f64a681b36f1",
+      params: {
+        fullName: "invitee_full_name",   // Calendly param; split into firstName + lastName
+        email:    "invitee_email",
+        company:  "answer_2"             // VERIFY: confirm which answer_N is Company in RocketPay's Calendly
+      },
+      forwardExtraFields: false          // if true, also pass phone/product/segment as agent context
+    };
+
+    (function () {
+      var modal   = document.getElementById('siaModal');
+      var card    = modal.querySelector('.sia-modal-card');
+      var btnOpen = document.getElementById('siaBtn');
+      var btnClose = document.getElementById('siaClose');
+      var iframe  = null;
+      var savedOverflow = '';
+
+      // ── Build iframe src from URL params ───────────────────
+      function buildSrc() {
+        var p = new URLSearchParams(window.location.search);
+        var fullName  = p.get(CONFIG.params.fullName) || '';
+        var parts     = fullName.trim().split(/\s+/);
+        var firstName = parts[0] || '';
+        var lastName  = parts.slice(1).join(' ') || '';
+        var email     = p.get(CONFIG.params.email) || '';
+        var company   = p.get(CONFIG.params.company) || '';
+
+        var q = new URLSearchParams();
+        q.set('firstName',  firstName);
+        q.set('lastName',   lastName);
+        q.set('email',      email);
+        q.set('company',    company);
+        q.set('autostart',  'true');
+        q.set('clientname', CONFIG.clientname);
+        q.set('clientid',   CONFIG.clientid);
+
+        return CONFIG.iframeBase + '?' + q.toString();
+      }
+
+      // ── Open ───────────────────────────────────────────────
+      function openModal() {
+        iframe = document.createElement('iframe');
+        iframe.src = buildSrc();
+        iframe.setAttribute('allow', 'microphone; autoplay; clipboard-write');
+        card.appendChild(iframe);
+
+        savedOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        modal.setAttribute('aria-hidden', 'false');
+        btnClose.focus();
+      }
+
+      // ── Close ──────────────────────────────────────────────
+      function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = savedOverflow;
+
+        // Remove iframe after transition to avoid white flash
+        var duration = 300;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          duration = 0;
+        }
+        setTimeout(function () {
+          if (iframe && iframe.parentNode) {
+            iframe.parentNode.removeChild(iframe);
+          }
+          iframe = null;
+        }, duration);
+      }
+
+      // ── Event listeners ────────────────────────────────────
+      btnOpen.addEventListener('click', openModal);
+      btnClose.addEventListener('click', closeModal);
+
+      // Close on backdrop click
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      // Close on Escape
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+
+  <script src="shared/components.js?v=5" defer></script>
+</body>
+</html>

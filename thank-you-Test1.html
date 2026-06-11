@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/Favicon.png">
+  <title>Demo Booked · RocketPay</title>
+
+  <!-- Enhanced Conversions: read Calendly URL params into dataLayer before GTM loads -->
+  <script>
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var phone = p.get('answer_1') || '';
+      window.rp_email   = p.get('invitee_email')    || '';
+      window.rp_phone   = phone.replace(/\s+/g, '');
+      window.rp_name    = p.get('invitee_full_name') || '';
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        'user_email':   window.rp_email,
+        'user_phone':   window.rp_phone,
+        'user_name':    window.rp_name,
+        'lead_segment': p.get('answer_3') || ''
+      });
+    })();
+  </script>
+  <!-- End Enhanced Conversions -->
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WZ2CTRLQ');</script>
+  <!-- End Google Tag Manager -->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="stylesheet" href="shared/style.css?v=2">
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────
+       Self-contained styling for the thank-you content. Uses an
+       rp- namespace so it never collides with shared/style.css.   */
+    :root {
+      --rp-ink:      #0b1b3a;
+      --rp-body:     #5a6478;
+      --rp-muted:    #8a93a6;
+      --rp-blue:     #0d53d8;
+      --rp-blue-2:   #2f6bf0;
+      --rp-blue-dk:  #0b47bc;
+      --rp-tint:     #f3f7ff;
+      --rp-tint-2:   #e9f0ff;
+      --rp-border:   #dfe7fb;
+      --rp-line:     #eef0f5;
+      --rp-green:    #16a34a;
+      --rp-dot:      #22c55e;
+      --rp-page:     #eef1f7;
+      --rp-card:     #ffffff;
+    }
+
+    .rp-wrap {
+      min-height: 100dvh;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 32px 18px calc(32px + env(safe-area-inset-bottom, 0px));
+      background: var(--rp-page);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .rp-logo img { height: 30px; width: auto; display: block; }
+
+    .rp-card {
+      width: 100%;
+      max-width: 460px;
+      box-sizing: border-box;
+      background: var(--rp-card);
+      border: 1px solid #eef1f6;
+      border-radius: 22px;
+      box-shadow: 0 1px 2px rgba(11,27,58,0.04), 0 18px 50px rgba(11,27,58,0.08);
+      padding: 26px 24px 22px;
+    }
+
+    /* ── Signature: the Sia presence panel ─────────────────────── */
+    .sia-panel {
+      background:
+        radial-gradient(120% 90% at 0% 0%, var(--rp-tint-2) 0%, var(--rp-tint) 42%, #ffffff 100%);
+      border: 1px solid var(--rp-border);
+      border-radius: 16px;
+      padding: 20px 20px 22px;
+    }
+
+    .sia-id { display: flex; align-items: center; gap: 13px; }
+
+    .sia-avatar {
+      position: relative;
+      flex-shrink: 0;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--rp-blue-2), var(--rp-blue));
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(13,83,216,0.30);
+    }
+    /* live ring */
+    .sia-avatar::before {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid rgba(34,197,94,0.45);
+      animation: sia-ring 2.4s ease-out infinite;
+    }
+    .sia-avatar-dot {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 15px;
+      height: 15px;
+      background: var(--rp-dot);
+      border: 3px solid #fff;
+      border-radius: 50%;
+    }
+
+    .sia-name { font-size: 1.12rem; font-weight: 700; color: var(--rp-ink); line-height: 1.1; }
+    .sia-role {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--rp-blue);
+      margin-top: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sia-role .sia-live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--rp-dot);
+      animation: sia-pulse 2s ease-in-out infinite;
+    }
+
+    .sia-desc {
+      font-size: 0.94rem;
+      color: var(--rp-body);
+      line-height: 1.55;
+      margin: 16px 0 18px;
+    }
+
+    .sia-btn {
+      width: 100%;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      background: var(--rp-blue);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 15px 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(13,83,216,0.28);
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+    }
+    .sia-btn:hover  { background: var(--rp-blue-dk); box-shadow: 0 10px 26px rgba(13,83,216,0.34); }
+    .sia-btn:active { transform: scale(0.985); }
+    .sia-btn:focus-visible { outline: 3px solid rgba(13,83,216,0.45); outline-offset: 2px; }
+    .sia-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+
+    .sia-microcopy {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--rp-muted);
+      margin: 11px 0 0;
+    }
+
+    /* ── Secondary: booking confirmed ──────────────────────────── */
+    .rp-divider { height: 1px; background: var(--rp-line); border: 0; margin: 22px 0; }
+
+    .rp-confirm { display: flex; align-items: flex-start; gap: 11px; }
+    .rp-confirm-check {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: #e8f6ee;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .rp-confirm-check svg { width: 14px; height: 14px; }
+    .rp-confirm-text { font-size: 0.92rem; line-height: 1.5; }
+    .rp-confirm-text strong { color: var(--rp-ink); font-weight: 700; }
+    .rp-confirm-text span { color: var(--rp-muted); }
+
+    .rp-steps {
+      list-style: none;
+      margin: 18px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .rp-step { display: flex; align-items: flex-start; gap: 11px; }
+    .rp-step-num {
+      flex-shrink: 0;
+      width: 23px; height: 23px;
+      border-radius: 7px;
+      background: var(--rp-tint-2);
+      color: var(--rp-blue);
+      font-size: 0.74rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .rp-step-text { font-size: 0.87rem; color: var(--rp-body); line-height: 1.5; }
+    .rp-step-text strong { color: var(--rp-ink); font-weight: 600; }
+
+    .rp-foot {
+      margin: 20px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--rp-line);
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--rp-muted);
+    }
+    .rp-foot a { color: var(--rp-blue); text-decoration: none; font-weight: 500; }
+    .rp-foot a:hover { text-decoration: underline; }
+
+    /* ── Motion keyframes ──────────────────────────────────────── */
+    @keyframes sia-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes sia-ring {
+      0%   { transform: scale(1);    opacity: 0.7; }
+      70%  { transform: scale(1.18); opacity: 0;   }
+      100% { transform: scale(1.18); opacity: 0;   }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sia-avatar::before,
+      .sia-role .sia-live-dot { animation: none; }
+      .sia-modal[aria-hidden="false"] { animation: none; }
+      .sia-modal-card { animation: none !important; }
+    }
+
+    /* ── Modal ─────────────────────────────────────────────────── */
+    .sia-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(7, 17, 38, 0.55);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .sia-modal[aria-hidden="false"] { opacity: 1; visibility: visible; }
+
+    .sia-modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 88vh;
+      max-height: 88vh;
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 28px 90px rgba(7,17,38,0.40);
+      transform: scale(0.92);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+    }
+    .sia-modal[aria-hidden="false"] .sia-modal-card { transform: scale(1); opacity: 1; }
+
+    .sia-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(11,27,58,0.06);
+      color: #333;
+      font-size: 1.3rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .sia-modal-close:hover { background: rgba(11,27,58,0.12); }
+    .sia-modal iframe { width: 100%; height: 100%; border: none; }
+
+    @media (max-width: 600px) {
+      .rp-card { padding: 22px 18px 18px; border-radius: 18px; }
+      .sia-modal-card {
+        max-width: 100%;
+        width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+      }
+      .sia-modal-close { top: calc(10px + env(safe-area-inset-top, 0px)); right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ2CTRLQ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="rp-wrap">
+
+    <div class="rp-logo">
+      <img src="assets/G178.webp" alt="RocketPay">
+    </div>
+
+    <div class="rp-card">
+
+      <!-- ── Hero: Sia presence panel ── -->
+      <div class="sia-panel">
+        <div class="sia-id">
+          <div class="sia-avatar">
+            S
+            <span class="sia-avatar-dot"></span>
+          </div>
+          <div>
+            <div class="sia-name">Sia</div>
+            <div class="sia-role"><span class="sia-live-dot"></span>AI Sales Engineer, online now</div>
+          </div>
+        </div>
+
+        <p class="sia-desc">
+          Skip the wait. Sia can walk you through RocketPay and answer your questions right now, in your browser. It takes about two minutes.
+        </p>
+
+        <button class="sia-btn" id="siaBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 1.5a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0v-7a3 3 0 0 0-3-3Z" fill="#fff"/>
+            <path d="M19 10.5v1a7 7 0 0 1-14 0v-1" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 18.5v4m-4 0h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Talk to Sia
+        </button>
+        <p class="sia-microcopy">No download. No callback wait.</p>
+      </div>
+
+      <hr class="rp-divider">
+
+      <!-- ── Secondary: booking confirmed ── -->
+      <div class="rp-confirm">
+        <span class="rp-confirm-check">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12.5L10 17.5L19 8" stroke="#16a34a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <p class="rp-confirm-text">
+          <strong>Your demo is confirmed.</strong>
+          <span>Prefer to wait? Our team will reach out before your session.</span>
+        </p>
+      </div>
+
+      <ol class="rp-steps">
+        <li class="rp-step">
+          <span class="rp-step-num">1</span>
+          <span class="rp-step-text"><strong>Check your inbox</strong> for a confirmation email with your booking details.</span>
+        </li>
+        <li class="rp-step">
+          <span class="rp-step-num">2</span>
+          <span class="rp-step-text"><strong>Our team connects</strong> before the session to understand your use case.</span>
+        </li>
+        <li class="rp-step">
+          <span class="rp-step-num">3</span>
+          <span class="rp-step-text"><strong>Your demo session</strong> covers the features relevant to your collections setup.</span>
+        </li>
+      </ol>
+
+      <p class="rp-foot">Questions? Write to us at <a href="mailto:akshita.s@rocketpay.co.in">akshita.s@rocketpay.co.in</a></p>
+
+    </div>
+
+  </div>
+
+  <!-- ── Sia Modal ── -->
+  <div class="sia-modal" id="siaModal" aria-hidden="true" role="dialog" aria-label="Talk to Sia">
+    <div class="sia-modal-card">
+      <button class="sia-modal-close" id="siaClose" aria-label="Close">&times;</button>
+      <!-- iframe injected by JS on open, removed on close -->
+    </div>
+  </div>
+
+  <script>
+    // ── CONFIG: all editable values in one place ──────────────
+    var CONFIG = {
+      iframeBase: "https://qa.marklinea.com/",   // Switch to production Marklinea URL before real prospects hit this
+      clientname: "rocketpay",
+      clientid:   "269fbd7f-a51b-4273-9366-f64a681b36f1",
+      params: {
+        fullName: "invitee_full_name",   // Calendly param; split into firstName + lastName
+        email:    "invitee_email",
+        company:  "answer_2"             // VERIFY: confirm which answer_N is Company in RocketPay's Calendly
+      },
+      forwardExtraFields: false          // if true, also pass phone/product/segment as agent context
+    };
+
+    (function () {
+      var modal    = document.getElementById('siaModal');
+      var card     = modal.querySelector('.sia-modal-card');
+      var btnOpen  = document.getElementById('siaBtn');
+      var btnClose = document.getElementById('siaClose');
+      var iframe   = null;
+      var savedOverflow = '';
+
+      // ── Build iframe src from URL params ───────────────────
+      function buildSrc() {
+        var p = new URLSearchParams(window.location.search);
+        var fullName  = p.get(CONFIG.params.fullName) || '';
+        var parts     = fullName.trim().split(/\s+/);
+        var firstName = parts[0] || '';
+        var lastName  = parts.slice(1).join(' ') || '';
+        var email     = p.get(CONFIG.params.email) || '';
+        var company   = p.get(CONFIG.params.company) || '';
+
+        var q = new URLSearchParams();
+        q.set('firstName',  firstName);
+        q.set('lastName',   lastName);
+        q.set('email',      email);
+        q.set('company',    company);
+        q.set('autostart',  'true');
+        q.set('clientname', CONFIG.clientname);
+        q.set('clientid',   CONFIG.clientid);
+
+        return CONFIG.iframeBase + '?' + q.toString();
+      }
+
+      // ── Open ───────────────────────────────────────────────
+      function openModal() {
+        iframe = document.createElement('iframe');
+        iframe.src = buildSrc();
+        iframe.setAttribute('allow', 'microphone; autoplay; clipboard-write');
+        card.appendChild(iframe);
+
+        savedOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        modal.setAttribute('aria-hidden', 'false');
+        btnClose.focus();
+      }
+
+      // ── Close ──────────────────────────────────────────────
+      function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = savedOverflow;
+
+        var duration = 300;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) duration = 0;
+        setTimeout(function () {
+          if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+          iframe = null;
+        }, duration);
+      }
+
+      // ── Event listeners ────────────────────────────────────
+      btnOpen.addEventListener('click', openModal);
+      btnClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+      });
+    })();
+  </script>
+
+  <script src="shared/components.js?v=5" defer></script>
+</body>
+</html>
