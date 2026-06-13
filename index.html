@@ -290,6 +290,73 @@
       margin: 0 auto 24px;
     }
 
+    /* ── Language Selector ─────────────────────────────────────── */
+    .lang-selector {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border: 2px solid var(--rp-border);
+      border-radius: 8px;
+      background: var(--rp-card-bg);
+      transition: border-color 150ms ease, background 150ms ease;
+    }
+
+    .lang-option:hover {
+      border-color: var(--rp-blue);
+    }
+
+    .lang-option.selected {
+      border-color: var(--rp-blue);
+      background: var(--rp-blue-light);
+    }
+
+    .lang-option input {
+      display: none;
+    }
+
+    .lang-radio {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--rp-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 150ms ease;
+    }
+
+    .lang-option.selected .lang-radio {
+      border-color: var(--rp-blue);
+    }
+
+    .lang-radio-inner {
+      width: 10px;
+      height: 10px;
+      background: var(--rp-blue);
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 150ms ease;
+    }
+
+    .lang-option.selected .lang-radio-inner {
+      transform: scale(1);
+    }
+
+    .lang-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--rp-text);
+    }
+
     .sia-cta-row {
       display: flex;
       align-items: center;
@@ -529,6 +596,21 @@
         <p class="sia-desc">
           <span id="agentNameDesc">Sia</span> is <span id="clientLabel">RocketPay</span>'s <span id="agentRoleDesc">AI Sales Engineer</span>. She connects right here in your browser, walks you through the platform, and answers your questions. It takes a couple of minutes. No waiting for a callback.
         </p>
+
+        <!-- Language Selector -->
+        <div class="lang-selector" id="langSelector">
+          <label class="lang-option selected" data-lang="eng">
+            <input type="radio" name="language" value="eng" checked>
+            <span class="lang-radio"><span class="lang-radio-inner"></span></span>
+            <span class="lang-label">English</span>
+          </label>
+          <label class="lang-option" data-lang="hin">
+            <input type="radio" name="language" value="hin">
+            <span class="lang-radio"><span class="lang-radio-inner"></span></span>
+            <span class="lang-label">Hindi</span>
+          </label>
+        </div>
+
         <div class="sia-cta-row">
           <button class="sia-btn" id="siaBtn" type="button">
             <svg viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z" fill="#fff"/><path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M12 19v4m-4 0h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
@@ -642,9 +724,22 @@
       var btnClose    = document.getElementById('siaClose');
       var postcall    = document.getElementById('siaPostcall');
       var postcallBtn = document.getElementById('postcallCloseBtn');
+      var langSelector = document.getElementById('langSelector');
+      var langOptions  = langSelector.querySelectorAll('.lang-option');
       var iframe      = null;
       var savedOverflow = '';
       var callEnded   = false;
+      var selectedLanguage = 'eng'; // Default to English
+
+      // ── Language selector logic ────────────────────────────
+      langOptions.forEach(function(option) {
+        option.addEventListener('click', function() {
+          langOptions.forEach(function(opt) { opt.classList.remove('selected'); });
+          option.classList.add('selected');
+          option.querySelector('input').checked = true;
+          selectedLanguage = option.dataset.lang;
+        });
+      });
 
       // ── Build iframe src from Calendly URL params ──────────
       function buildSrc() {
@@ -664,6 +759,7 @@
         q.set('autostart',  'true');
         q.set('clientname', client.clientname);
         q.set('clientid',   client.clientid);
+        q.set('selectedlanguage', selectedLanguage);
 
         return client.iframeBase + '?' + q.toString();
       }
